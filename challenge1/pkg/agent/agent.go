@@ -59,7 +59,7 @@ type BaseResponse struct {
 }
 
 type AskRequest struct {
-	SessionID string `json:"sessionId,omitempty"`
+	SessionID string `json:"session,omitempty"`
 	Message   string `json:"message,omitempty"`
 	Location  string `json:"loc,omitempty"`
 	Company   string `json:"company,omitempty"`
@@ -67,7 +67,7 @@ type AskRequest struct {
 
 type AskResponse struct {
 	BaseResponse
-	SessionID string `json:"sessionId,omitempty"`
+	SessionID string `json:"session,omitempty"`
 	Response  string `json:"response,omitempty"`
 }
 
@@ -89,10 +89,10 @@ func (a *Agent) onAsk(ectx echo.Context) error {
 	s := a.getOrCreateSession(r.SessionID)
 	/* remove the following IF condition */
 	if s == nil {
-		return nil
+		panic("Session cannot be created")
 	}
 
-	return ectx.JSON(http.StatusOK, AskResponse{SessionID: r.SessionID, Response: ""})
+	return ectx.JSON(http.StatusOK, AskResponse{SessionID: r.SessionID, Response: "Test"})
 }
 
 func newSession() (string, error) {

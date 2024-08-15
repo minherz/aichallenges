@@ -56,14 +56,14 @@ async function handleButtonClick() {
     botmessage.classList.add("bot-message-loading");
     const botmessagespan = document.createElement("span");
     botmessagespan.innerText = ""
-    botmessagespan.classList.add("bot-message-text");
+    botmessagespan.classList.add("bot-message-loading");
     botmessage.classList.add("bot-message");
     botmessage.appendChild(botmessagespan);
     botmessages.appendChild(botmessage);
     botmessages.scrollTo(0, botmessages.scrollHeight);
 
     // Request a response from the Shopping Assistant
-    const response = await fetch("{{ $.baseUrl }}/ask", {
+    const response = await fetch("ask", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",

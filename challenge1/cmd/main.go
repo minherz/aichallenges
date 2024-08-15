@@ -11,6 +11,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"github.com/minherz/aichallenges/challenge1/pkg/agent"
 )
 
 var (
@@ -57,14 +58,14 @@ func main() {
 		middleware.CORSWithConfig(middleware.CORSConfig{
 			AllowOrigins: []string{"*"},
 		}),
-		middleware.GzipWithConfig(middleware.GzipConfig{
-			Level: 5,
-		}),
-		middleware.Secure(),
 		middleware.StaticWithConfig(middleware.StaticConfig{
 			Root:  "web/static",
 			HTML5: true,
 		}),
+		middleware.GzipWithConfig(middleware.GzipConfig{
+			Level: 5,
+		}),
+		middleware.Secure(),
 	)
 	e.IPExtractor = echo.ExtractIPFromXFFHeader(
 		echo.TrustLoopback(false),   // e.g. ipv4 start with 127.
@@ -74,10 +75,10 @@ func main() {
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()
-	// agent, err := agent.NewAgent(ctx, e)
-	// if err != nil {
-	// 	e.Logger.Fatal("failed to initialize Vertex AI agent: %q", err.Error())
-	// }
+	agent, err := agent.NewAgent(ctx, e)
+	if err != nil {
+		e.Logger.Fatal("failed to initialize Vertex AI agent: %q", err.Error())
+	}
 
 	// Start server
 	go func() {
@@ -92,7 +93,7 @@ func main() {
 
 	// Wait for interrupt signal and gracefully shutdown the server after 5 seconds.
 	<-ctx.Done()
-	// agent.Close()
+	agent.Close()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
