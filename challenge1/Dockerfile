@@ -30,7 +30,7 @@ WORKDIR /app
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 
 # Copy the binary to the production image from the builder stage.
-COPY --from=builder /app/wastewise ./
+COPY --from=builder /app/challenge ./
 COPY web/ web/
 
 # Run the web service on container startup.
