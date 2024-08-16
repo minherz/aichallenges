@@ -18,6 +18,15 @@ import (
 const (
 	endpointIDEnvVar       = "ENDPOINT_ID"
 	endpointLocationEnvVar = "REGION_NAME"
+	modelEndpointTemplate  = "projects/%s/locations/%s/endpoints/%s"
+)
+
+var (
+	modelParameters = map[string]interface{}{
+		"temperature":     0.8,
+		"maxInputTokens":  2048,
+		"maxOutputTokens": 256,
+	}
 )
 
 type Agent struct {
@@ -36,7 +45,7 @@ func NewAgent(ctx context.Context, e *echo.Echo) (*Agent, error) {
 		c   *aiplatform.PredictionClient
 		err error
 	)
-	projectID := utils.GetenvWithDefault("PROJECT_ID", "")
+	projectID := utils.GetenvWithDefault("PROJECT_ID", utils.GetenvWithDefault("GOOGLE_CLOUD_PROJECT", ""))
 	if projectID == "" {
 		if projectID, err = utils.ProjectID(ctx); err != nil {
 			return nil, fmt.Errorf("could not retrieve current project ID: %w", err)
@@ -55,7 +64,7 @@ func NewAgent(ctx context.Context, e *echo.Echo) (*Agent, error) {
 	if err != nil {
 		return nil, fmt.Errorf("could not initialize AI client: %w", err)
 	}
-	endpointUri := fmt.Sprintf("projects/%s/locations/%s/endpoints/%s", projectID, region, modelEndpointID)
+	endpointUri := fmt.Sprintf(modelEndpointTemplate, projectID, region, modelEndpointID)
 	agent := &Agent{c: c, endpointUri: endpointUri, sessions: make(map[string]*ChatSession)}
 	slog.Debug("initialized ai agent", "project", projectID, "region", region, "endpoint_id", modelEndpointID)
 
@@ -71,18 +80,23 @@ func (a *Agent) Close() {
 	}
 }
 
+// SendMessage sends prompt following https://cloud.google.com/vertex-ai/generative-ai/docs/text/test-text-prompts
 func (a *Agent) SendMessage(ctx context.Context, msg string) (string, error) {
-	instance, err := structpb.NewValue(map[string]interface{}{
-		"prompt":      structpb.NewStringValue(msg),
-		"temperature": 0.2,
-		"max_tokens":  512,
+	promptValue, err := structpb.NewValue(map[string]interface{}{
+		"prompt": msg,
 	})
 	if err != nil {
-		return "", fmt.Errorf("failed to setup request parameters: %w", err)
+		return "", fmt.Errorf("failed to convert prompt %q to Value: %w", msg, err)
 	}
+	parametersValue, err := structpb.NewValue(modelParameters)
+	if err != nil {
+		return "", fmt.Errorf("unable to convert parameters to Value: %w", err)
+	}
+
 	r := &aiplatformpb.PredictRequest{
-		Endpoint:  a.endpointUri,
-		Instances: []*structpb.Value{instance},
+		Endpoint:   a.endpointUri,
+		Instances:  []*structpb.Value{promptValue},
+		Parameters: parametersValue,
 	}
 	resp, err := a.c.Predict(ctx, r)
 	if err != nil {

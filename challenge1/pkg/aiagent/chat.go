@@ -7,9 +7,10 @@ import (
 )
 
 const (
-	startTurnUser  = "<start_of_turn>user\n"
-	startTurnModel = "<start_of_turn>model\n"
-	endTurn        = "<end_of_turn>\n"
+	startTurnUser    = "<start_of_turn>user\n"
+	startTurnModel   = "<start_of_turn>model\n"
+	endTurn          = "<end_of_turn>"
+	chatTurnTemplate = "%s%s%s"
 )
 
 // Chat is a helper to manage the conversation state for Gemma model
@@ -37,7 +38,7 @@ func (chat *Chat) SendMessage(ctx context.Context, msg string) (string, error) {
 	if chat.system != "" {
 		prompt = fmt.Sprintf("%s\n%s", chat.system, prompt)
 	}
-	userMsg := fmt.Sprintf("%s%s%s", startTurnUser, msg, endTurn)
+	userMsg := fmt.Sprintf(chatTurnTemplate, startTurnUser, msg, endTurn)
 	prompt = fmt.Sprintf("%s%s", prompt, userMsg)
 
 	response, err := chat.fn(ctx, prompt)
@@ -56,6 +57,6 @@ func (chat *Chat) SendMessage(ctx context.Context, msg string) (string, error) {
 	}
 	// update history
 	chat.history = append(chat.history, userMsg)
-	chat.history = append(chat.history, fmt.Sprintf("%s%s%s", startTurnModel, response, endTurn))
+	chat.history = append(chat.history, fmt.Sprintf(chatTurnTemplate, startTurnModel, response, endTurn))
 	return response, nil
 }
