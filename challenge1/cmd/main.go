@@ -11,7 +11,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"github.com/minherz/aichallenges/challenge1/pkg/agent"
+	"github.com/minherz/aichallenges/challenge1/pkg/aiagent"
 )
 
 var (
@@ -75,7 +75,7 @@ func main() {
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()
-	agent, err := agent.NewAgent(ctx, e)
+	agent, err := aiagent.NewAgent(ctx, e)
 	if err != nil {
 		e.Logger.Fatal("failed to initialize Vertex AI agent: %q", err.Error())
 	}
