@@ -23,6 +23,7 @@ const (
 
 var (
 	modelParameters = map[string]interface{}{
+		"raw":             true,
 		"temperature":     0.8,
 		"maxInputTokens":  2048,
 		"maxOutputTokens": 256,
@@ -92,6 +93,8 @@ func (a *Agent) SendMessage(ctx context.Context, msg string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("unable to convert parameters to Value: %w", err)
 	}
+
+	slog.Debug("prompting model", "endpoint", a.endpointUri, "prompt", msg, "parameters", fmt.Sprintf("%v", modelParameters))
 
 	r := &aiplatformpb.PredictRequest{
 		Endpoint:   a.endpointUri,
