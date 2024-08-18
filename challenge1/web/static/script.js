@@ -76,7 +76,7 @@ async function handleButtonClick() {
     const responseJson = await response.json();
     console.log(responseJson);
     // refresh session Id
-    sessionId = response.session
+    sessionId = responseJson.session
 
     // Replace the placeholder bot message text with the real response
     // Making sure to remove any lists or product IDs from that message
