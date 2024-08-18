@@ -15,15 +15,14 @@ const (
 
 // Chat is a helper to manage the conversation state for Gemma model
 type Chat struct {
-	system  string
 	fn      SendMessage
 	history []string
 }
 
 type SendMessage func(context.Context, string) (string, error)
 
-func NewChat(systemInstructions string, fn SendMessage) *Chat {
-	return &Chat{fn: fn, system: systemInstructions, history: make([]string, 2)}
+func NewChat(fn SendMessage) *Chat {
+	return &Chat{fn: fn, history: make([]string, 2)}
 }
 
 func (chat *Chat) Prompt() string {
@@ -35,11 +34,8 @@ func (chat *Chat) Prompt() string {
 
 func (chat *Chat) SendMessage(ctx context.Context, msg string) (string, error) {
 	prompt := chat.Prompt()
-	if chat.system != "" {
-		prompt = fmt.Sprintf("%s\n%s", chat.system, prompt)
-	}
 	userMsg := fmt.Sprintf(chatTurnTemplate, startTurnUser, msg, endTurn)
-	prompt = fmt.Sprintf("%s%s", prompt, userMsg)
+	prompt = fmt.Sprintf("%s%s\n%s", prompt, strings.TrimRight(userMsg, " \n"), startTurnModel)
 
 	response, err := chat.fn(ctx, prompt)
 	if err != nil {

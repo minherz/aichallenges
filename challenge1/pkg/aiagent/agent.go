@@ -114,7 +114,7 @@ func (a *Agent) SendMessage(ctx context.Context, msg string) (string, error) {
 func (a *Agent) getOrCreateSession(id string) *ChatSession {
 	s, ok := a.sessions[id]
 	if !ok {
-		s = &ChatSession{id: id, messages: NewChat("", a.SendMessage)}
+		s = &ChatSession{id: id, messages: NewChat(a.SendMessage)}
 		a.sessions[id] = s
 	}
 	return s
