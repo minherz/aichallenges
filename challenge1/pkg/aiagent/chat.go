@@ -7,10 +7,10 @@ import (
 )
 
 const (
-	startTurnUser    = "<start_of_turn>user\n"
-	startTurnModel   = "<start_of_turn>model\n"
+	startTurnUser    = "<start_of_turn>user"
+	startTurnModel   = "<start_of_turn>model"
 	endTurn          = "<end_of_turn>"
-	chatTurnTemplate = "%s%s%s"
+	chatTurnTemplate = "%s\n%s%s"
 )
 
 // Chat is a helper to manage the conversation state for Gemma model
@@ -22,7 +22,7 @@ type Chat struct {
 type SendMessage func(context.Context, string) (string, error)
 
 func NewChat(fn SendMessage) *Chat {
-	return &Chat{fn: fn, history: make([]string, 2)}
+	return &Chat{fn: fn, history: []string{}}
 }
 
 func (chat *Chat) Prompt() string {

@@ -94,7 +94,7 @@ func (a *Agent) SendMessage(ctx context.Context, msg string) (string, error) {
 		return "", fmt.Errorf("unable to convert parameters to Value: %w", err)
 	}
 
-	slog.Debug("prompting model", "endpoint", a.endpointUri, "prompt", msg, "parameters", fmt.Sprintf("%v", modelParameters))
+	slog.Debug("prompting model", "endpoint", a.endpointUri, "inputs", msg, "parameters", fmt.Sprintf("%v", modelParameters))
 
 	r := &aiplatformpb.PredictRequest{
 		Endpoint:   a.endpointUri,
@@ -134,7 +134,7 @@ type AskRequest struct {
 type AskResponse struct {
 	BaseResponse
 	SessionID string `json:"session,omitempty"`
-	Response  string `json:"response,omitempty"`
+	Message   string `json:"message,omitempty"`
 }
 
 func (a *Agent) onAsk(ectx echo.Context) error {
@@ -157,7 +157,7 @@ func (a *Agent) onAsk(ectx echo.Context) error {
 	if err != nil {
 		return reportError(ectx, http.StatusInternalServerError, fmt.Errorf("chat response error: %w", err))
 	}
-	return ectx.JSON(http.StatusOK, AskResponse{SessionID: r.SessionID, Response: response})
+	return ectx.JSON(http.StatusOK, AskResponse{SessionID: r.SessionID, Message: response})
 }
 
 func newID() (string, error) {
