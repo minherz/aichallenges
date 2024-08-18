@@ -84,7 +84,7 @@ func (a *Agent) Close() {
 // SendMessage sends prompt following https://cloud.google.com/vertex-ai/generative-ai/docs/text/test-text-prompts
 func (a *Agent) SendMessage(ctx context.Context, msg string) (string, error) {
 	promptValue, err := structpb.NewValue(map[string]interface{}{
-		"prompt": msg,
+		"inputs": msg,
 	})
 	if err != nil {
 		return "", fmt.Errorf("failed to convert prompt %q to Value: %w", msg, err)
