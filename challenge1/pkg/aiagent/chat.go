@@ -33,7 +33,7 @@ func (chat *Chat) Prompt() string {
 }
 
 func (chat *Chat) SendMessage(ctx context.Context, msg string) (string, error) {
-	prompt := chat.Prompt()
+	prompt := "Respond in plain text. No formatting.\n" + chat.Prompt()
 	userMsg := fmt.Sprintf(chatTurnTemplate, startTurnUser, msg, endTurn)
 	prompt = fmt.Sprintf("%s%s\n%s", prompt, strings.TrimRight(userMsg, " \n"), startTurnModel)
 

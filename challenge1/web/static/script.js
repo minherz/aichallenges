@@ -53,7 +53,6 @@ async function handleButtonClick() {
 
     // Construct and render placeholder bot message
     const botmessage = document.createElement("p");
-    botmessage.classList.add("bot-message-loading");
     const botmessagespan = document.createElement("span");
     botmessagespan.innerText = ""
     botmessagespan.classList.add("bot-message-loading");
@@ -74,14 +73,22 @@ async function handleButtonClick() {
         }),
     });
     const responseJson = await response.json();
-    console.log(responseJson);
-    // refresh session Id
-    sessionId = responseJson.session
+    if (response.status === 200) {
+        console.log(responseJson);
+        // refresh session Id
+        sessionId = responseJson.session
+        botmessagespan.innerText = responseJson.message;
+    } else {
+        if (Object.hasOwn(responseJson, 'error')) {
+            botmessagespan.innerText = responseJson.error;
+        } else {
+            botmessagespan.innerText = 'unknown error';
+        }
+    }
 
     // Replace the placeholder bot message text with the real response
     // Making sure to remove any lists or product IDs from that message
-    botmessagespan.innerText = responseJson.message;
-    botmessage.classList.remove("bot-message-loading");
+    botmessagespan.classList.remove("bot-message-loading");
     botmessages.scrollTo(0, botmessages.scrollHeight);
 
     // Re-enable button and input field
