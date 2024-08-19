@@ -92,9 +92,10 @@ func (a *Agent) SendMessage(ctx context.Context, msg string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("unable to convert parameters to Value: %w", err)
 	}
-
-	slog.Debug("prompting model", "endpoint", a.endpointUri, "inputs", msg, "parameters", fmt.Sprintf("%v", modelParameters))
-
+	slog.Debug("predict request data",
+		"endpoint", a.endpointUri,
+		"inputs", msg,
+		"parameters", fmt.Sprintf("%v", modelParameters))
 	r := &aiplatformpb.PredictRequest{
 		Endpoint:   a.endpointUri,
 		Instances:  []*structpb.Value{promptValue},
@@ -107,6 +108,12 @@ func (a *Agent) SendMessage(ctx context.Context, msg string) (string, error) {
 	if len(resp.Predictions) == 0 {
 		return "", fmt.Errorf("model returned empty response: %v", resp)
 	}
+	slog.Debug("predict response data",
+		"response_0", resp.Predictions[0].GetStringValue(),
+		"response_count", len(resp.Predictions),
+		"model", resp.ModelDisplayName,
+		"model_version", resp.ModelVersionId,
+		"metadata", fmt.Sprintf("%v", resp.Metadata))
 	return resp.Predictions[0].GetStringValue(), nil
 }
 
