@@ -13,6 +13,13 @@ const (
 	chatTurnTemplate = "%s\n%s%s"
 )
 
+var (
+	systemInstructions = []string{
+		"Ensure your answers are concise.",
+		"Return answer as html without backticks.",
+	}
+)
+
 // Chat is a helper to manage the conversation state for Gemma model
 type Chat struct {
 	fn      SendMessage
@@ -25,7 +32,7 @@ func NewChat(fn SendMessage) *Chat {
 	return &Chat{fn: fn, history: []string{}}
 }
 
-func (chat *Chat) Prompt() string {
+func (chat *Chat) History() string {
 	if len(chat.history) == 0 {
 		return ""
 	}
@@ -33,7 +40,7 @@ func (chat *Chat) Prompt() string {
 }
 
 func (chat *Chat) SendMessage(ctx context.Context, msg string) (string, error) {
-	prompt := "Respond in plain text. No formatting.\n" + chat.Prompt()
+	prompt := strings.Join(systemInstructions, "") + "\n" + chat.History()
 	userMsg := fmt.Sprintf(chatTurnTemplate, startTurnUser, msg, endTurn)
 	prompt = fmt.Sprintf("%s%s\n%s", prompt, strings.TrimRight(userMsg, " \n"), startTurnModel)
 

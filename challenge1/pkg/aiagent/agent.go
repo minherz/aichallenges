@@ -23,10 +23,9 @@ const (
 
 var (
 	modelParameters = map[string]interface{}{
-		"raw":             true,
-		"temperature":     0.8,
+		"temperature":     0.1,
 		"maxInputTokens":  2048,
-		"maxOutputTokens": 256,
+		"maxOutputTokens": 2048,
 	}
 )
 

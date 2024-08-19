@@ -53,10 +53,11 @@ async function handleButtonClick() {
 
     // Construct and render placeholder bot message
     const botmessage = document.createElement("p");
-    const botmessagespan = document.createElement("span");
-    botmessagespan.innerText = ""
-    botmessagespan.classList.add("bot-message-loading");
+    botmessage.classList.add("bot-message-loading");
     botmessage.classList.add("bot-message");
+    const botmessagespan = document.createElement("span");
+    botmessagespan.classList.add("bot-message");
+    botmessagespan.innerText = ""
     botmessage.appendChild(botmessagespan);
     botmessages.appendChild(botmessage);
     botmessages.scrollTo(0, botmessages.scrollHeight);
@@ -88,7 +89,7 @@ async function handleButtonClick() {
 
     // Replace the placeholder bot message text with the real response
     // Making sure to remove any lists or product IDs from that message
-    botmessagespan.classList.remove("bot-message-loading");
+    botmessage.classList.remove("bot-message-loading");
     botmessages.scrollTo(0, botmessages.scrollHeight);
 
     // Re-enable button and input field
