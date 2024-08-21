@@ -53,11 +53,10 @@ async function handleButtonClick() {
 
     // Construct and render placeholder bot message
     const botmessage = document.createElement("p");
-    botmessage.classList.add("bot-message-loading");
-    botmessage.classList.add("bot-message");
     const botmessagespan = document.createElement("span");
-    botmessagespan.classList.add("bot-message");
     botmessagespan.innerText = ""
+    botmessage.classList.add("bot-message");
+    botmessage.classList.add("bot-message-loading");
     botmessage.appendChild(botmessagespan);
     botmessages.appendChild(botmessage);
     botmessages.scrollTo(0, botmessages.scrollHeight);
