@@ -2,7 +2,7 @@
 
 ## Description
 
-The goal is to implement a sample chat application that connects to an AI model.
+The goal is to implement a sample chat application that connects to an endpoint of the deployed Gemma 2 model.
 The application supposed to:
 
 * Manage a multi-turn chat with users
@@ -11,7 +11,7 @@ The application supposed to:
 
 ## Technical challenges
 
-Deploy an AI model from Google Cloud [Model Garden](https://cloud.google.com/model-garden). Start with Gemma-2 or LLaMa.
+Deploy an AI model from Google Cloud [Model Garden](https://cloud.google.com/model-garden).
 Instrument the application so you can log and monitor its performance effectively.
 Examples of custom metrics can be:
 
@@ -41,6 +41,19 @@ The challenge uses open model `gemma-2-9b-it` from [HuggingFace](https://hugging
 The HuggingFace version is selected because it is configured to deploy on GPU.
 It is in opposite to the gemma-2 model from Google's [Model Garden](https://console.cloud.google.com/vertex-ai/publishers/google/model-garden/gemma2) which is deployed to TPU.
 Deploying a model from HuggingFaces requires [access token](https://huggingface.co/docs/hub/en/security-tokens).
+
+## Deploying to Cloud Run
+
+The application is deployed as Cloud Run service using continuously deploy (CD) from a repository feature.
+CD is configured to build the service using [Dockerfile](https://github.com/minherz/aichallenges/blob/main/challenge1/Dockerfile).
+The service is configured to allow unauthenticated invocations.
+In order to run correctly the service requires the following environment variables to be set for the service container:
+
+| Variable name | Value description |
+|---|---|
+| ENDPOINT_ID | The endpoint identificator for the deployed model. |
+| REGION_NAME | The name of the region where the model is deployed. |
+| DO_DEBUG | (Optional) set to "1" to enable debug level logging for the echo webserver and the application. |
 
 ## Cost considerations
 
