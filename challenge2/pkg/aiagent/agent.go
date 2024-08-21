@@ -49,11 +49,11 @@ type ChatSession struct {
 
 func NewAgent(ctx context.Context, e *echo.Echo) (*Agent, error) {
 	var (
-		c                  *genai.Client
-		m                  *genai.GenerativeModel
-		w                  *utils.FileWatcher
-		err                error
-		systemInstructions string
+		c            *genai.Client
+		m            *genai.GenerativeModel
+		w            *utils.FileWatcher
+		err          error
+		instructions string
 	)
 	projectID := utils.GetenvWithDefault("PROJECT_ID", utils.GetenvWithDefault("GOOGLE_CLOUD_PROJECT", ""))
 	if projectID == "" {
@@ -76,21 +76,22 @@ func NewAgent(ctx context.Context, e *echo.Echo) (*Agent, error) {
 	if path != "" {
 		path := filepath.Join(path, systemInstructionFilePath)
 		if text, err := os.ReadFile(path); err == nil {
-			systemInstructions = string(text)
+			instructions = string(text)
 			w, _ = utils.NewFileWatcher(path)
 		}
 	}
-	if systemInstructions == "" {
-		systemInstructions = strings.Join(defaultSystemInstructions, " ")
+	if instructions == "" {
+		instructions = strings.Join(defaultSystemInstructions, " ")
 	}
 	m.SystemInstruction = &genai.Content{
-		Parts: []genai.Part{genai.Text(systemInstructions)},
+		Parts: []genai.Part{genai.Text(instructions)},
 	}
+	slog.Debug("system instructions have been set", "instructions", instructions)
 	agent := &Agent{c: c, m: m, w: w, sessions: make(map[string]*ChatSession)}
 	if w != nil {
 		w.Watch(ctx, agent.loadSystemInstructions)
 	}
-	slog.Debug("initialized ai agent", "project", projectID, "region", region, "mode_name", modelName, "system_instructions", systemInstructions)
+	slog.Debug("initialized ai agent", "project", projectID, "region", region, "mode_name", modelName, "system_instructions", instructions)
 
 	// setup handlers
 	e.POST("/ask", agent.onAsk)
@@ -126,6 +127,7 @@ func (a *Agent) loadSystemInstructions(path string) {
 	a.m.SystemInstruction = &genai.Content{
 		Parts: []genai.Part{genai.Text(instructions)},
 	}
+	slog.Debug("system instructions have been updated", "instructions", instructions)
 }
 
 type BaseResponse struct {
