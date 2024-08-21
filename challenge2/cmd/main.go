@@ -11,7 +11,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"github.com/minherz/aichallenges/challenge1/pkg/aiagent"
+	"github.com/minherz/aichallenges/challenge2/pkg/aiagent"
 )
 
 var (
