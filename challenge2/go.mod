@@ -7,7 +7,6 @@ require (
 	cloud.google.com/go/vertexai v0.12.0
 	github.com/google/uuid v1.6.0
 	github.com/labstack/echo/v4 v4.12.0
-	github.com/minherz/aichallenges/challenge1 v0.0.0-20240819011537-e9fe836e164a
 )
 
 require (
