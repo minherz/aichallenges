@@ -11,6 +11,10 @@
 **/bin
 **/challenge
 
+# Python packages, environments
+**/__pycache__
+**/env
+
 # Go workspace file
 # go.work
 # go.work.sum
