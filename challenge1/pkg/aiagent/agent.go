@@ -45,17 +45,17 @@ func NewAgent(ctx context.Context, e *echo.Echo) (*Agent, error) {
 		c   *aiplatform.PredictionClient
 		err error
 	)
-	projectID := utils.GetenvWithDefault("PROJECT_ID", utils.GetenvWithDefault("GOOGLE_CLOUD_PROJECT", ""))
+	projectID := utils.GetEnvOrDefault("PROJECT_ID", utils.GetEnvOrDefault("GOOGLE_CLOUD_PROJECT", ""))
 	if projectID == "" {
 		if projectID, err = utils.ProjectID(ctx); err != nil {
 			return nil, fmt.Errorf("could not retrieve current project ID: %w", err)
 		}
 	}
-	region := utils.GetenvWithDefault(endpointLocationEnvVar, "")
+	region := utils.GetEnvOrDefault(endpointLocationEnvVar, "")
 	if region == "" {
 		return nil, fmt.Errorf("could not retrieve model location from environment")
 	}
-	modelEndpointID := utils.GetenvWithDefault(endpointIDEnvVar, "")
+	modelEndpointID := utils.GetEnvOrDefault(endpointIDEnvVar, "")
 	if modelEndpointID == "" {
 		return nil, fmt.Errorf("could not retrieve model endpoint ID from environment")
 	}
