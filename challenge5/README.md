@@ -81,10 +81,50 @@ WHERE TRUE
 
 See documentation about [ML.GENERATE_EMBEDDING function][bqdoc3] for more details.
 
-TO-BE-DEFINED: How to search the model for more details
-
 [bqdoc1]: https://cloud.google.com/bigquery/docs/generate-text-embedding
-[bqdoc2]: https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-remote-model
 [bqdoc3]: https://cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-generate-embedding
 [bqdoc4]: https://cloud.google.com/bigquery/docs/samples/bigquery-load-table-gcs-json
 [models]: https://cloud.google.com/vertex-ai/generative-ai/docs/embeddings/get-text-embeddings#supported-models
+
+### (Optionally) Add Vector Index to improve the search performance
+
+Use [CREATE VECTOR INDEX](https://cloud.google.com/bigquery/docs/reference/standard-sql/data-definition-language#create_vector_index_statement) statement.
+
+## BigQuery Vector search
+
+Executing vector search in BigQuery requires:
+
+1. [Create an embedding][embed_text] from a text / prompt
+1. Execute a query that uses [VECTOR_SEARCH function][bq_vector_search] to find "closest" matching from the embeddings [generated previously](#Loading_embeddings_to_BigQuery)
+
+Creating embedding is straightforward. Currently it requires the use of the auto-generated version of the client library (like in Challenge 1). Code can be found in [pkg/agents/embedding.go](https://github.com/minherz/aichallenges/blob/challenge5/challenge5/pkg/agents/embedding.go).
+
+Executing the BigQuery query requires google/bigquery package. It supports "pushing" the embedding as a parameter into the following query:
+
+```sql
+SELECT base.hotel_name AS hotel_name,
+	base.hotel_address AS hotel_address,
+	base.hotel_description AS hotel_description,
+	base.nearest_attractions AS nearest_attractions
+FROM VECTOR_SEARCH(TABLE genai_upskilling.hotels_fictional_data,
+	'embeddings',
+	(SELECT @embeddings),
+	 top_k => 5,
+	distance_type => 'COSINE',
+	options => '{"use_brute_force":true}')
+```
+
+Note the following things about the query:
+
+- Uses "brute force" option to search for matching embeddings; for large data it is recommended to [create an index][bq_vector_index] and use the different options: `'{"fraction_lists_to_search": 0.005}'`.
+- Uses BigQuery select statement to select the parameterized embedding vector as a value; alternatively it could be stored in a different table or derived using a sub-query.
+- Uses `base.` prefix to retrieve other fields from the table; if the value is queried from another table, other fields from that table can be retrieved using `query.` prefix.
+
+[embed_text]: https://cloud.google.com/vertex-ai/generative-ai/docs/embeddings/get-text-embeddings#get_text_embeddings_for_a_snippet_of_text
+[bq_vector_search]: https://cloud.google.com/bigquery/docs/vector-search#use_the_vector_search_function_with_brute_force
+[bq_vector_index]: https://cloud.google.com/bigquery/docs/vector-search#create_a_vector_index
+
+### Call BigQuery from Cloud Run
+
+There is no special configuration to call BigQuery API from Cloud Run.
+Communication between the Cloud Run service and BigQuery and between the service and Vertex are secured because the grpc packets are [encrypted in-transit](https://cloud.google.com/docs/security/encryption-in-transit) and [do not leave Google internal network](https://cloud.google.com/run/docs/securing/private-networking#to-other-services).
