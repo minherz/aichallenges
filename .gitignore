@@ -13,6 +13,8 @@
 
 # Python packages, environments
 **/__pycache__
+**/.env
+**/.venv
 **/env
 
 # Go workspace file
