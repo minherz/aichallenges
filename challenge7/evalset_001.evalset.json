@@ -1,0 +1,77 @@
+{
+  "eval_set_id": "evalset_001",
+  "name": "evalset_001",
+  "description": null,
+  "eval_cases": [
+    {
+      "eval_id": "caseace360",
+      "conversation": [
+        {
+          "invocation_id": "e-7fa87069-c7f0-4b30-8e09-0efb4612fc58",
+          "user_content": {
+            "parts": [
+              {
+                "video_metadata": null,
+                "thought": null,
+                "inline_data": null,
+                "file_data": null,
+                "thought_signature": null,
+                "code_execution_result": null,
+                "executable_code": null,
+                "function_call": null,
+                "function_response": null,
+                "text": "what is a weather in bellevue, wa"
+              }
+            ],
+            "role": "user"
+          },
+          "final_response": {
+            "parts": [
+              {
+                "video_metadata": null,
+                "thought": null,
+                "inline_data": null,
+                "file_data": null,
+                "thought_signature": null,
+                "code_execution_result": null,
+                "executable_code": null,
+                "function_call": null,
+                "function_response": null,
+                "text": "The current weather in Bellevue, Washington, is cloudy with a temperature of 18.6°C and a wind speed of 6.9 km/h."
+              }
+            ],
+            "role": null
+          },
+          "intermediate_data": {
+            "tool_uses": [
+              {
+                "id": "adk-8d6a69eb-330a-46ab-874c-6534bbe61b7c",
+                "args": {
+                  "request": "bellevue, wa"
+                },
+                "name": "location_agent_v1"
+              },
+              {
+                "id": "adk-bef4437a-ad5d-4dea-bddc-3c397ef21694",
+                "args": {
+                  "longtitude": "-122.20",
+                  "latitude": "47.61"
+                },
+                "name": "get_weather"
+              }
+            ],
+            "intermediate_responses": []
+          },
+          "creation_timestamp": 1751060574.279176
+        }
+      ],
+      "session_input": {
+        "app_name": "challenge7",
+        "user_id": "user",
+        "state": {}
+      },
+      "creation_timestamp": 1751060602.6862226
+    }
+  ],
+  "creation_timestamp": 1751060560.1283164
+}
