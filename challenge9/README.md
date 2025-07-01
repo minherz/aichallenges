@@ -8,7 +8,7 @@ The journey:
 1. Explore how to package your changes for both the function and the database, such that you can keep everything synchronized.
 1. Validate that your changes are successful, and that you’re getting similar results back (proving that the migration was successful).
 
-## Executing the journey
+## Implementing the journey
 
 Step #1 is straightforward. JSS deployment may require to be destroyed and recreated. Works best on the projects with a standard billing accounts.
 

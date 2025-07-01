@@ -1,0 +1,4 @@
+google-adk
+google-cloud-dlp
+GOOGLE_CLOUD_PROJECT=leoy-toolbox
+

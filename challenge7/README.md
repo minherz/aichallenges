@@ -37,4 +37,6 @@ This challenge implements the following:
    ```
 
 1. Run the Web interface with `adk web` or run CLI interface with `adk run challenge7` from the repository level folder.
-   **NOTE:** The repository level folder is `aifolder/` and not `aifolder/challenge7`.
+   If you run the Web interface, select `challenge7`.
+   > [!NOTE]
+   > The repository level folder is `aifolder/` and not `aifolder/challenge7`.
